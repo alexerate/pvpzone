@@ -1,5 +1,5 @@
-local pvpzone = {}
-local pvpzone_store = AreaStore()
+pvpzone = {}
+pvpzone_store = AreaStore()
 pvpzone_store:from_file(minetest.get_worldpath() .. "/pvpzone_store.dat")
 
 -- Register privilege and chat command.
@@ -81,5 +81,8 @@ minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, 
 	end
 	return true
 end)
+
+local modpath = minetest.get_modpath("pvpzone")
+dofile(modpath .. "/hud.lua")
 
 
