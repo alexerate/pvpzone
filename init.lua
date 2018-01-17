@@ -3,11 +3,11 @@ local pvpzone_store = AreaStore()
 pvpzone_store:from_file(minetest.get_worldpath() .. "/pvpzone_store.dat")
 
 -- Register privilege and chat command.
-minetest.register_privilege("pvpzone_admin", "Can set and remove PvP areas.")
+minetest.register_privilege("pvpzone_admin", "Set PvP Zones.")
 
 minetest.register_chatcommand("pvpzone", {
-	description = "Mark and set areas for PvP.",
-	params = "{ pos1 | pos2 | set | named <areaname> | remove <id> | list }",
+	description = "Set PvP Zones.",
+	params = "{ pos1 | pos2 | set [zonename] | remove <id> | list }",
 	privs = "pvpzone_admin",
 	func = function(name, paramlist)
 		local piterator = string.gmatch(paramlist,"%S+")
@@ -19,58 +19,51 @@ minetest.register_chatcommand("pvpzone", {
 			else
 				pvpzone[name].pos1 = pos
 			end
-			minetest.chat_send_player(name, "Position 1: " .. minetest.pos_to_string(pos))
+			minetest.chat_send_player(name, "Position 1 : " .. minetest.pos_to_string(pos))
 		elseif param == "pos2" then
 			if not pvpzone[name] then
 				pvpzone[name] = {pos2 = pos}
 			else
 				pvpzone[name].pos2 = pos
 			end
-			minetest.chat_send_player(name, "Position 2: " .. minetest.pos_to_string(pos))
-		elseif param == "set" or param == "named" then
-			local areaname = "pvp_area"
-			if param == "named" then
-				local newname = piterator()
-				if newname then areaname = newname end
-			end
+			minetest.chat_send_player(name, "Position 2 : " .. minetest.pos_to_string(pos))
+		elseif param == "set" then
+			local zonename = "pvpzone"
+			local newname = piterator()
+			if newname then zonename = newname end
 
 			if not pvpzone[name] or not pvpzone[name].pos1 then
-				minetest.chat_send_player(name, "Position 1 missing, use \"/pvpzone pos1\" to set.")
+				minetest.chat_send_player(name, "Position 1's missing, use \"/pvpzone pos1\" to set.")
 
 			elseif not pvpzone[name].pos2 then
-				minetest.chat_send_player(name, "Position 2 missing, use \"/pvpzone pos2\" to set.")
+				minetest.chat_send_player(name, "Position 2's missing, use \"/pvpzone pos2\" to set.")
 
 			else
-				local areaID = pvpzone_store:insert_area(pvpzone[name].pos1, pvpzone[name].pos2, areaname)
-				minetest.chat_send_player(name, "Area "..areaname.." ["..areaID.."] has been set.")
+				local zoneID = pvpzone_store:insert_area(pvpzone[name].pos1, pvpzone[name].pos2, zonename)
+				minetest.chat_send_player(name, "PvP "..zonename.." ["..zoneID.."] has been set.")
 				pvpzone_store:to_file(minetest.get_worldpath() .. "/pvpzone_store.dat")
-				area_list[areaID] = {name = name, min = pvpzone[name].pos1, max = pvpzone[name].pos2, data = areaname}
-				save_area_list()
 			end
 
 		elseif param == "remove" then
-			local areaID = piterator()
-			if pvpzone_store:remove_area(areaID) then
+			local zoneID = piterator()
+			if pvpzone_store:remove_area(zoneID) then
 				pvpzone_store:to_file(minetest.get_worldpath() .. "/pvpzone_store.dat")
-				area_list[areaID] = nil
-				save_area_list()
-				minetest.chat_send_player(name, "Removed area "..areaID)
+				minetest.chat_send_player(name, "Removed zone "..zoneID)
 			else
-				minetest.chat_send_player(name, "Invalid area "..areaID)
+				minetest.chat_send_player(name, "Invalid zone "..zoneID..". Use \"/pvpzone list\" to list zones.")
 			end
 
 		elseif param == "list" then
-			local i = 1
+			pvpzone_store = AreaStore()
+			pvpzone_store:from_file(minetest.get_worldpath() .. "/pvpzone_store.dat")
+			local i = 0
 			while true do
-				local thisarea = pvpzone_store:get_area(i,true,true)
-				if thisarea == nil or i > 10 then
+				local thiszone = pvpzone_store:get_area(i,true,true)
+				if thiszone == nil or i > 50 then
 					break
 				end
-
-				local areastring = "Area "..i.." : "
-				areastring = areastring .. thisarea.data .. " from "..minetest.pos_to_string(thisarea.min).." to "..minetest.pos_to_string(thisarea.max)
-
-				minetest.chat_send_player(name, areastring )
+				local zonestring = "PvP ["..i.."] : " .. thiszone.data .. " from "..minetest.pos_to_string(thiszone.min).." to "..minetest.pos_to_string(thiszone.max)
+				minetest.chat_send_player(name, zonestring)
 				i = i+1
 			end
 		else
@@ -88,3 +81,5 @@ minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, 
 	end
 	return true
 end)
+
+
