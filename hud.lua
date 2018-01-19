@@ -21,7 +21,7 @@ minetest.register_globalstep(function(dtime)
 		local name = player:get_player_name()
 		local pos = vector.round(player:getpos())
 		local couleur = "0xFFFFFF"
-		local texte = "PvP Safe
+		local texte = "PvP Safe"
 		
 		for k, v in pairs(pvpzone_store:get_areas_for_pos(pos, true, true)) do
 			if k then
