@@ -20,17 +20,18 @@ minetest.register_globalstep(function(dtime)
 	for _, player in pairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
 		local pos = vector.round(player:getpos())
+		local couleur = "0xFFFFFF"
+		local texte = "PvP Safe
 		
 		for k, v in pairs(pvpzone_store:get_areas_for_pos(pos, true, true)) do
 			if k then
-				player:hud_change(pvpzone.hud[name],"text","PvP : "..v.data)
-				player:hud_change(pvpzone.hud[name],"number","0xFF0000")
+				texte = "PvP : "..v.data
+				couleur = "0xFF0000"
 				break
-			else
-				player:hud_change(pvpzone.hud[name],"text","PvP Safe")
-				player:hud_change(pvpzone.hud[name],"number","0xFFFFFF")
 			end
 		end
+		player:hud_change(pvpzone.hud[name],"text",texte)
+		player:hud_change(pvpzone.hud[name],"number",couleur)
 	end
 end)
 
