@@ -25,6 +25,7 @@ minetest.register_globalstep(function(dtime)
 			if k then
 				player:hud_change(pvpzone.hud[name],"text","PvP : "..v.data)
 				player:hud_change(pvpzone.hud[name],"number","0xFF0000")
+				break
 			else
 				player:hud_change(pvpzone.hud[name],"text","PvP Safe")
 				player:hud_change(pvpzone.hud[name],"number","0xFFFFFF")
