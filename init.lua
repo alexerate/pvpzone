@@ -74,6 +74,7 @@ minetest.register_chatcommand("pvpzone", {
 
 -- Register punchplayer callback.
 minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
+	if not hitter:is_player() then return false end
 	for k, v in pairs(pvpzone_store:get_areas_for_pos(player:getpos())) do
 		if k then
 			return false
