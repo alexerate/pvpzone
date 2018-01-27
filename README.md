@@ -1,5 +1,5 @@
 # pvpzone
-fork de https://github.com/everamzah/pvp_areas
+~~fork de~~ https://github.com/everamzah/pvp_areas
 
 # How to
 `/pvpzone pos1` define 1st position of zone
